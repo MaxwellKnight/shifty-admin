@@ -1,0 +1,17 @@
+// @import "rsuite/dist/rsuite.css";
+
+.modal {
+
+    display: grid;
+    place-items: center;
+
+    &>button {
+        padding: .5em 2em;
+        font-weight: bold;
+        margin-block-start: 1em;
+    }
+}
+
+.hidden {
+    display: none;
+}

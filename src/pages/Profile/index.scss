@@ -1,0 +1,69 @@
+.profile {
+    width: 100%;
+
+    & p {
+        display: flex;
+        flex-direction: column;
+        font-size: .9rem;
+        color: #6d6d6d;
+
+
+        & span {
+            font-size: 1.1rem;
+            color: #2c2c2c;
+        }
+    }
+
+
+
+    &__info {
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: flex-end;
+        text-align: right;
+        gap: 5em;
+
+        &__table-settings {
+            align-self: flex-start;
+            display: grid;
+            gap: 1em;
+        }
+
+        &__personal {
+            display: grid;
+            gap: 1em;
+
+        }
+
+        &__contact {
+            display: grid;
+            gap: 1em;
+
+        }
+    }
+}
+
+h3 {
+    text-align: right;
+    font-size: 1.5rem;
+    margin-block-start: 1rem;
+}
+
+.btn-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-block: 1rem;
+
+    & button {
+        border: none;
+        padding: 1rem 1.5rem;
+        cursor: pointer;
+        border-color: transparent;
+        transition: border-color .3s ease;
+
+        &.active {
+            border: 1px solid #2c2c2c;
+        }
+    }
+}

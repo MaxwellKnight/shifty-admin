@@ -1,0 +1,29 @@
+.login-container {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2em;
+        padding: 5em;
+        border: 1px solid #202020;
+        border-radius: 1em;
+
+        &__input {
+            width: 100%;
+            text-align: right;
+            padding: 1em 1em;
+        }
+
+        &>button {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 1em 2em;
+        }
+    }
+}

@@ -1,0 +1,31 @@
+.list {
+    max-height: 90vh;
+    min-width: 12rem;
+    overflow-x: auto;
+    margin-inline: auto;
+    text-align: center;
+    border: 1px solid #2c2c2c;
+
+    .table {
+        border-collapse: collapse;
+        position: relative;
+        width: 100%;
+
+        th {
+            position: sticky;
+            top: 0;
+            background: #2c2c2c;
+            color: whitesmoke;
+        }
+
+        tr:nth-child(2n) {
+            background: #2c2c2c10;
+        }
+
+        th,
+        td {
+            padding: 1em 1.5em;
+        }
+    }
+
+}

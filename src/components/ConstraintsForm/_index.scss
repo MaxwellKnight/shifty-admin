@@ -1,0 +1,87 @@
+.constraints-form {
+    max-width: max-content;
+    margin-inline-end: auto;
+
+    &__wrapper {
+        border: 1px solid #2c2c2c;
+    }
+
+
+    &__shifts {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    &__day {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        place-items: center;
+
+
+        &:not(:last-of-type) {
+            & input[type='text'] {
+                border-bottom: 1px solid #2c2c2c;
+            }
+
+            & label {
+                border-bottom: 1px solid #2c2c2c;
+            }
+        }
+
+        & label {
+            height: 100%;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            place-items: center;
+            border-right: 1px solid #2c2c2c;
+            transition: background-color .2s ease;
+
+            & span {
+                padding: 1rem 1.5rem;
+                cursor: pointer;
+            }
+
+            &.rejected-shift {
+                background-color: rgba(240, 128, 128, 0.5);
+            }
+        }
+
+    }
+
+    & p {
+        min-width: 180px;
+        padding-block: 1rem;
+        padding-inline: 1rem;
+        text-align: center;
+        color: whitesmoke;
+        background-color: #505050;
+
+        &:not(:first-of-type) {
+            border-right: 1px solid #2c2c2c;
+        }
+    }
+
+    & input[type="checkbox"] {
+        cursor: pointer;
+    }
+
+    & input[type="text"] {
+        border: none;
+        padding: 1em;
+        width: 100%;
+        height: 100%;
+        border-right: 1px solid #2c2c2c;
+    }
+}
+
+.btn-form {
+    border: 0;
+    display: block;
+    padding: 1em 2em;
+    margin-block: 1em;
+    margin-inline-start: auto;
+    background-color: #2c2c2c;
+    color: whitesmoke;
+    cursor: pointer;
+}

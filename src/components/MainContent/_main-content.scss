@@ -1,0 +1,14 @@
+.main {
+    display: flex;
+    gap: 1em;
+
+    .content {
+        flex-grow: 10;
+        overflow-x: auto;
+        padding: 1em;
+    }
+
+    .sidebar {
+        flex-grow: 1;
+    }
+}
