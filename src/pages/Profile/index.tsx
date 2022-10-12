@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { MainContent, ConstraintsForm, Constraints, Loader } from '../../components'
+import Shifts from '../../components/Shifts'
 import { useFetch } from '../../hooks'
 import './index.scss'
 
@@ -9,6 +10,7 @@ const Profile = () => {
     const params = useParams()
     const [agent, setAgent] = useState<any>(null)
     const [currCons, setCurrCons] = useState<Map<string, any> | null>(null)
+    const [currShifts, setCurrShifts] = useState<Map<string, any> | null>(null)
     const [isFormShown, setIsFormShown] = useState<boolean>(false)
     const { data, error, reFetch } = useFetch(`http://localhost:8000/agents/${params.id}`)
     const getAgentRole = (role: string) => {
@@ -29,8 +31,14 @@ const Profile = () => {
     useEffect(() => {
         if (data && !error) {
             setAgent({ ...data._doc })
-            const consMap = new Map(Object.entries(data._doc.weeklyConstraints))
-            setCurrCons(new Map(consMap))
+            if (data._doc.weeklyConstraints) {
+                const consMap = new Map(Object.entries(data._doc.weeklyConstraints))
+                setCurrCons(new Map(consMap))
+            }
+            if (data._doc.weeklyShifts) {
+                const shiftsMap = new Map(Object.entries(data._doc.weeklyShifts))
+                setCurrShifts(new Map(shiftsMap))
+            }
         }
     }, [params.id, data])
 
@@ -79,7 +87,11 @@ const Profile = () => {
                         אילוצים
                     </button>
                 </div>
-                {isFormShown && currCons ? <ConstraintsForm handleSubmit={handleFormSubmit} /> : <Constraints constraints={currCons} />}
+
+                <div className='split'>
+                    {isFormShown && currCons ? <ConstraintsForm handleSubmit={handleFormSubmit} /> : <Constraints constraints={currCons} />}
+                    <Shifts shifts={currShifts} />
+                </div>
             </>
         </MainContent>
     )

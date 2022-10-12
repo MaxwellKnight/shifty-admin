@@ -1,75 +1,90 @@
-import React from 'react'
-import axios from 'axios'
+import { Dispatch } from 'react'
 
-const INITIAL_STATE = {
-    currentTable: new Map<string, any>(),
+export type TableState = {
+    currentTable: any,
+    startDate: string,
+    endDate: string,
+    currentDay: string,
+    currentShift: string,
+    currentAgents: any,
+    error?: string | undefined,
+    loading: boolean,
+    dispatch?: Dispatch<TableAction>
+}
+
+export type ActionPayload =
+    | { startDate: string, endDate: string, table: any }
+    | { shift: string }
+    | { day: string }
+    | boolean
+
+export type TableAction = {
+    type: string,
+    payload: { startDate: string, endDate: string, table: any } | { shift: string } | { day: string } | any
+    error?: string,
+    loading?: boolean,
+}
+
+
+const INITIAL_TABLE_STATE: TableState = {
+    currentTable: null,
+    startDate: '',
+    endDate: '',
     currentDay: '',
     currentShift: '',
     currentAgents: [],
-    activeDay: '',
+    loading: false,
 }
 
-type TableAction = {
-    type: string,
-    payload: string | any[]
-    error: string,
-}
+const TableReducer = (state: TableState, action: TableAction): TableState => {
 
-const initialize = async () => {
-    try {
-        const { data } = await axios.get('http://localhost:8000/tables/new')
-        if (data) {
-            return {
-                currentTable: new Map(data[0]?.table),
-                currentDay: [...data[0]?.table?.SUN],
-                currentShift: data[0]?.table?.SUN?._id,
-                activeDay: 'SUN'
-            }
-        }
-        else {
-            return { ...INITIAL_STATE, error: 'data is not available' }
-        }
-    } catch (error) {
-        return { ...INITIAL_STATE, error: 'failed to fetch data from server' }
+    const getAgentsFromShift = (id: string) => {
+        const shift = state.currentTable[state.currentDay].find((shift: any) => shift._id === id)
+        return shift.agents
     }
-}
 
-const fetchAgents = async (agentsId: string[]) => {
-    try {
-        const agents = await Promise.all(agentsId.map(async (id: string) => {
-            try {
-                const { data } = await axios.get(`http://localhost:8000/agents/${id}`)
-                return data._doc
-            } catch (error) {
-                return 'could not fetch agents from server'
-            }
-        }))
-        return { ...agents }
-    } catch (error) {
-        return {
-            ...INITIAL_STATE,
-            error: 'could not fetch agents from server'
-        }
-    }
-}
-
-const TableReducer = (state: typeof INITIAL_STATE, action: TableAction) => {
     switch (action.type) {
-        // case 'INITIALIZE': {
-        //     const newState = initialize()
-        //     // const agents = fetchAgents()
-        // }
-        case 'CHANGE_SHIFT': {
+        case 'LOADING': {
             return {
-                ...INITIAL_STATE,
-                currentShift: action.payload
+                ...state,
+                loading: true
+            }
+        }
+        case 'INITIALIZE': {
+            if (action.payload.table.SUN[0])
+                return {
+                    ...state,
+                    startDate: action.payload.startDate,
+                    endDate: action.payload.endDate,
+                    currentTable: action.payload.table,
+                    currentDay: 'SUN',
+                    currentShift: action.payload.table.SUN[0]._id,
+                    currentAgents: action.payload.table.SUN[0].agents,
+                    loading: false
+                }
+            else return { ...state, error: 'could not fetch table', loading: false }
+        }
+        case 'CHANGE_SHIFT': {
+            console.log(state.currentAgents)
+            return {
+                ...state,
+                currentShift: action.payload.shift,
+                currentAgents: getAgentsFromShift(action.payload.shift)
+            }
+        }
+        case 'CHANGE_DAY': {
+            return {
+                ...state,
+                currentDay: action.payload.day,
+                currentShift: state.currentTable[action.payload.day][0]._id,
+                currentAgents: state.currentTable[action.payload.day][0].agents
             }
         }
         default:
             return {
-                ...INITIAL_STATE
+                ...INITIAL_TABLE_STATE
             }
     }
 }
 
-export default TableReducer
+export { TableReducer, INITIAL_TABLE_STATE }

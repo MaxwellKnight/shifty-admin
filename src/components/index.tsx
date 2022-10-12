@@ -7,6 +7,8 @@ import List from './List'
 import Constraints from './Constraints'
 import ConstraintsForm from './ConstraintsForm'
 import Loader from './Loader'
-import PastTables from './PastTables'
+import Shifts from './Shifts'
+import Modal from './Modal'
+import TableNavigation from './TableNavigation'
 
-export { Agent, Agents, Chart, MainContent, Sidebar, List, Constraints, ConstraintsForm, Loader, PastTables }
+export { Agent, Agents, Chart, MainContent, Sidebar, List, Constraints, ConstraintsForm, Loader, Shifts, Modal, TableNavigation }

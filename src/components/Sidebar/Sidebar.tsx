@@ -8,27 +8,24 @@ const Sidebar: React.FC = () => {
     const linkStyles = {
         textDecoration: 'none',
         color: 'inherit',
-        fontSize: 'inherit'
+        fontSize: 'inherit',
+
     }
 
     return (
         <div className='sidebar'>
-            <div className="sidebar__item">
-                <Link to='/dashboard' style={linkStyles}>
-                    <span>צפה בעובדים</span>
-                </Link>
+            <Link to='/dashboard' style={linkStyles} className='sidebar__item'>
+                <span>צפה בעובדים</span>
                 <FontAwesomeIcon className='icon' icon={solid('user-secret')} />
-            </div>
-            <div className="sidebar__item">
-                <Link to='/tables' style={linkStyles}>
-                    <span> צפה בסידורים</span>
-                </Link>
+            </Link >
+            <Link to='/tables' style={linkStyles} className='sidebar__item'>
+                <span> צפה בסידורים</span>
                 <FontAwesomeIcon className='icon' icon={solid('table')} />
-            </div>
-            <div className="sidebar__item">
+            </Link>
+            <Link to='/shifts' style={linkStyles} className='sidebar__item'>
                 <span>צפה במשמרות</span>
                 <FontAwesomeIcon className='icon' icon={solid('network-wired')} />
-            </div>
+            </Link>
         </div >
     )
 }

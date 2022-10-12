@@ -1,102 +1,104 @@
-import { useEffect, useState } from 'react'
-import { Loader, MainContent } from '../../components'
-import { useFetch } from '../../hooks'
+import { TableContext } from '../../context/TableContext/TableContext'
 import { Link } from 'react-router-dom'
-import TableNav from './TableNav'
-import List from '../../components/List'
 import axios from 'axios'
 import './_table.scss'
-import { getBtnClass, getFacility, getShiftType, formattedDate } from '../../utils/functions'
+import {
+    useEffect,
+    useState,
+    useContext
+} from 'react'
+
+import {
+    Loader,
+    MainContent,
+    TableNavigation,
+    List
+} from '../../components'
+
+import {
+    getBtnClass,
+    getFacility,
+    getShiftType,
+    formattedDate
+} from '../../utils/functions'
 
 const Table = () => {
-    const [currShift, setCurrShift] = useState<string>('')
-    const [currAgents, setCurrAgents] = useState<any>([])
-    const [table, setTable] = useState<any>(null)
-    const [currTable, setCurrTable] = useState<any>('')
-    const [day, setCurrDay] = useState<any>(null)
-    const [activeDay, setActiveDay] = useState<string>('')
-    const { data, loading } = useFetch('http://localhost:8000/tables/new')
+    const { dispatch, ...state } = useContext(TableContext)
+    const [agents, setAgents] = useState<any>()
 
     useEffect(() => {
-        if (data) {
-            const t = { ...data[0]?.table }
-            setTable(t)
-            setCurrTable(data[0]?._id)
-            setCurrDay(t?.SUN)
-            setCurrShift(t?.SUN[0]?._id)
-            setActiveDay('SUN')
-            handleShiftClick(t?.SUN[0]?.agents, t?.SUN[0]?._id)
+        dispatch?.({ type: 'LOADING', payload: true })
+        const init = async () => {
+            const table = await axios.get('http://localhost:8000/tables/new')
+            dispatch?.({ type: 'INITIALIZE', payload: table.data[0] })
         }
-    }, [data])
+        init()
+    }, [])
 
-
-    const handleShiftClick = async (shiftAgents: string[], shiftId: string) => {
-        try {
-            const agents = await Promise.all(shiftAgents.map(async id => {
-                const respnose = await axios.get(`http://localhost:8000/agents/${id}`)
-                return respnose.data._doc
+    useEffect(() => {
+        const fetchAgents = async () => {
+            const agents = await Promise.all(state.currentAgents.map(async (id: string) => {
+                const response = await axios.get(`http://localhost:8000/agents/${id}`)
+                if (response.data) {
+                    const { name, _id } = response.data._doc
+                    return { name, _id }
+                }
             }))
-            setCurrAgents(Array.from(agents))
-            setCurrShift(shiftId)
-        } catch (error) {
-            console.log('could not fetch data')
+            setAgents(agents)
         }
-    }
+        fetchAgents()
+    }, [state.currentAgents])
 
-    const handleDayClick = (day: any, active: string) => {
-        setCurrDay(day)
-        setCurrShift(day[0]?._id)
-        setActiveDay(active)
-        handleShiftClick(day[0]?.agents, day[0]?._id)
-    }
+
+
     return (
         <MainContent>
-            <TableNav setTable={setCurrTable} />
-            {table ?
+            <TableNavigation setTable={dispatch} />
+            {state.currentTable ?
                 <>
                     <div className='table__container__wrap'>
 
                         <div className='table__container__wrap__days-list'>
                             <ul>
                                 <li
-                                    className={activeDay === 'SUN' ? 'active-day' : ''}
-                                    onClick={() => handleDayClick(table?.SUN, 'SUN')}
+                                    className={state.currentDay === 'SUN' ? 'active-day' : ''}
+                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'SUN' } })}
                                 >
                                     ראשון
                                 </li>
                                 <li
-                                    className={activeDay === 'MON' ? 'active-day' : ''}
-                                    onClick={() => handleDayClick(table?.MON, 'MON')}
+                                    className={state.currentDay === 'MON' ? 'active-day' : ''}
+                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'MON' } })}
                                 >
                                     שני
                                 </li>
                                 <li
-                                    className={activeDay === 'TUE' ? 'active-day' : ''}
-                                    onClick={() => handleDayClick(table?.TUE, 'TUE')}
+                                    className={state.currentDay === 'TUE' ? 'active-day' : ''}
+                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'TUE' } })}
                                 >
                                     שלישי
                                 </li>
                                 <li
-                                    className={activeDay === 'WED' ? 'active-day' : ''}
-                                    onClick={() => handleDayClick(table?.WED, 'WED')}
+                                    className={state.currentDay === 'WED' ? 'active-day' : ''}
+                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'WED' } })}
                                 >
                                     רביעי
                                 </li>
                                 <li
-                                    className={activeDay === 'THU' ? 'active-day' : ''}
-                                    onClick={() => handleDayClick(table?.THU, 'THU')}
+                                    className={state.currentDay === 'THU' ? 'active-day' : ''}
+                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'THU' } })}
                                 >
                                     חמישי
                                 </li>
                                 <li
-                                    className={activeDay === 'FRI' ? 'active-day' : ''}
-                                    onClick={() => handleDayClick(table?.FRI, 'FRI')}
+                                    className={state.currentDay === 'FRI' ? 'active-day' : ''}
+                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'FRI' } })}
                                 >
                                     שישי
                                 </li>
                                 <li
-                                    className={activeDay === 'SAT' ? 'active-day' : ''}
-                                    onClick={() => handleDayClick(table?.SAT, 'SAT')}
+                                    className={state.currentDay === 'SAT' ? 'active-day' : ''}
+                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'SAT' } })}
                                 >
                                     שבת
                                 </li>
@@ -105,8 +107,8 @@ const Table = () => {
                         <div>
                             <List
                                 headers={['עובדים']}
-                                data={Array.from(currAgents)}
-                                keyExtractor={(agent: any) => String(agent?._id)}
+                                data={agents}
+                                keyExtractor={(agent: any) => agent._id}
                                 renderItem={(agent: any) => (
                                     <td className='agents-list'>
                                         <Link to={`/dashboard/${agent._id}`} className='profile-link'>
@@ -119,14 +121,14 @@ const Table = () => {
                         <div>
                             <List
                                 headers={['מיקום', 'סוג משמרת', 'תאריך', 'כמות עובדים', 'תקינות',]}
-                                data={day}
+                                data={state.currentTable[state.currentDay]}
                                 keyExtractor={(shift: any) => String(shift._id)}
                                 renderItem={(shift => (
                                     <>
                                         <td>
                                             <button
-                                                className={getBtnClass(shift?._id, currShift) ? 'btn-table active' : 'btn-table'}
-                                                onClick={() => handleShiftClick(shift?.agents, shift?._id)}
+                                                className={getBtnClass(shift?._id, state.currentShift) ? 'btn-table active' : 'btn-table'}
+                                                onClick={() => dispatch?.({ type: 'CHANGE_SHIFT', payload: { shift: shift?._id } })}
                                             >
                                                 {getFacility(shift?.facility)}
                                             </button>
@@ -138,7 +140,7 @@ const Table = () => {
                                             {formattedDate(new Date(shift?.date))}
                                         </td>
                                         <td>
-                                            {shift?.agents.length}
+                                            {shift?.limit} / {shift?.agents.length}
                                         </td>
                                         <td
                                             className={shift?.isFull ? 'full' : 'partial'}
@@ -152,8 +154,9 @@ const Table = () => {
                     </div>
                 </>
                 :
-                <Loader />
+                <h1 style={{ textAlign: 'center', paddingTop: '5rem' }}>לא נמצאו נתונים בשלב זה</h1>
             }
+            {state.loading && <Loader />}
         </MainContent >
     )
 }

@@ -4,6 +4,8 @@ import './App.scss';
 import Dashboard from './Dashboard';
 import Table from './Table';
 import Profile from './Profile';
+import { TableContextProvider } from '../context/TableContext/TableContext';
+import Shifts from './Shifts';
 
 function App() {
   return (
@@ -16,7 +18,14 @@ function App() {
         </Route>
         <Route path='/login' element={<Login />} />
         <Route path='/tables'>
-          <Route index element={<Table />} />
+          <Route index element={
+            <TableContextProvider>
+              <Table />
+            </TableContextProvider>
+          } />
+        </Route>
+        <Route path='/shifts'>
+          <Route index element={<Shifts />} />
         </Route>
       </Routes>
     </BrowserRouter>
