@@ -1,9 +1,7 @@
 # Admin dashboard for shift app
 
-## Available Scripts
-
-In the project directory, you can run:
-
+Fork/Clone this project, and run:
+### `npm insrall`
 ### `npm start`
 
 Runs the app in the development mode.\
