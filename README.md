@@ -1,7 +1,8 @@
 # Admin dashboard for shift app
 
 Fork/Clone this project, and run:
-### `npm insrall`
+### `npm install`
+followed by: 
 ### `npm start`
 
 Runs the app in the development mode.\
