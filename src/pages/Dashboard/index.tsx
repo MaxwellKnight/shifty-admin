@@ -12,7 +12,7 @@ const Dashboard: React.FC = () => {
     useEffect(() => {
         if (user) {
             if (user!.role === 'admin') {
-                navigate('/dashboard')
+                navigate('/agents')
             }
             else navigate('/login')
         }

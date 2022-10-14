@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useReducer } from 'react'
-import { TableReducer, INITIAL_TABLE_STATE } from './TableReducer'
+import { TableReducer, INITIAL_TABLE_STATE, TABLE_ACTIONS } from './TableReducer'
 
 
 const TableContext = createContext(INITIAL_TABLE_STATE)
@@ -15,4 +15,4 @@ const TableContextProvider = ({ children }: { children: JSX.Element }) => {
     )
 }
 
-export { TableContext, TableContextProvider }
+export { TableContext, TableContextProvider, TABLE_ACTIONS }

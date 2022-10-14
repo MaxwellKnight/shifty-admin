@@ -17,6 +17,7 @@ header {
     }
 
     &__days-list ul {
+        color: #d2d2d2;
         min-width: 50px;
         list-style: none;
         text-align: right;
@@ -31,7 +32,7 @@ header {
 
             &.active-day {
                 font-weight: bold;
-                color: black;
+                color: whitesmoke;
             }
 
 
@@ -45,6 +46,8 @@ header {
                 margin-inline-start: .5em;
                 opacity: 0;
                 transition: opacity .2s ease;
+
+
             }
 
 
@@ -55,6 +58,7 @@ header {
             &:hover::after {
                 opacity: 1;
                 background-color: steelblue;
+
             }
         }
     }
@@ -81,14 +85,28 @@ header {
     font-weight: bold;
     cursor: pointer;
 
-    transition: border-color .2s ease;
+    transition: border-color .2s ease, color .2s ease;
 
     &:hover {
-        border-color: rgba(144, 238, 144, 0.8);
+        border-color: firebrick;
+        color: firebrick;
     }
 
     &.active {
-        border-color: rgba(144, 238, 144, 0.8);
+        border-color: firebrick;
+        color: firebrick;
+        position: relative;
+
+        &::before {
+            content: '>';
+            position: absolute;
+            right: -1em;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            font-size: 1.5rem;
+
+        }
     }
 }
 

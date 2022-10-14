@@ -1,4 +1,4 @@
-import { TableContext } from '../../context/TableContext/TableContext'
+import { TableContext, TABLE_ACTIONS } from '../../context/TableContext/TableContext'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import './_table.scss'
@@ -22,12 +22,14 @@ import {
     formattedDate
 } from '../../utils/functions'
 
+const { LOADING, INITIALIZE, CHANGE_DAY, CHANGE_SHIFT } = TABLE_ACTIONS
+
 const Table = () => {
     const { dispatch, ...state } = useContext(TableContext)
     const [agents, setAgents] = useState<any>()
 
     useEffect(() => {
-        dispatch?.({ type: 'LOADING', payload: true })
+        dispatch?.({ type: LOADING, payload: true })
         const init = async () => {
             const table = await axios.get('http://localhost:8000/tables/new')
             dispatch?.({ type: 'INITIALIZE', payload: table.data[0] })
@@ -53,7 +55,7 @@ const Table = () => {
 
     return (
         <MainContent>
-            <TableNavigation setTable={dispatch} />
+            <TableNavigation setTable={dispatch} table={state} />
             {state.currentTable ?
                 <>
                     <div className='table__container__wrap'>
@@ -62,43 +64,43 @@ const Table = () => {
                             <ul>
                                 <li
                                     className={state.currentDay === 'SUN' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'SUN' } })}
+                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'SUN' } })}
                                 >
                                     ראשון
                                 </li>
                                 <li
                                     className={state.currentDay === 'MON' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'MON' } })}
+                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'MON' } })}
                                 >
                                     שני
                                 </li>
                                 <li
                                     className={state.currentDay === 'TUE' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'TUE' } })}
+                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'TUE' } })}
                                 >
                                     שלישי
                                 </li>
                                 <li
                                     className={state.currentDay === 'WED' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'WED' } })}
+                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'WED' } })}
                                 >
                                     רביעי
                                 </li>
                                 <li
                                     className={state.currentDay === 'THU' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'THU' } })}
+                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'THU' } })}
                                 >
                                     חמישי
                                 </li>
                                 <li
                                     className={state.currentDay === 'FRI' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'FRI' } })}
+                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'FRI' } })}
                                 >
                                     שישי
                                 </li>
                                 <li
                                     className={state.currentDay === 'SAT' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: 'CHANGE_DAY', payload: { day: 'SAT' } })}
+                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'SAT' } })}
                                 >
                                     שבת
                                 </li>
@@ -111,7 +113,7 @@ const Table = () => {
                                 keyExtractor={(agent: any) => agent._id}
                                 renderItem={(agent: any) => (
                                     <td className='agents-list'>
-                                        <Link to={`/dashboard/${agent._id}`} className='profile-link'>
+                                        <Link to={`/agents/${agent._id}`} className='profile-link'>
                                             {agent.name}
                                         </Link>
                                     </td>
@@ -128,7 +130,7 @@ const Table = () => {
                                         <td>
                                             <button
                                                 className={getBtnClass(shift?._id, state.currentShift) ? 'btn-table active' : 'btn-table'}
-                                                onClick={() => dispatch?.({ type: 'CHANGE_SHIFT', payload: { shift: shift?._id } })}
+                                                onClick={() => dispatch?.({ type: CHANGE_SHIFT, payload: { shift: shift?._id } })}
                                             >
                                                 {getFacility(shift?.facility)}
                                             </button>

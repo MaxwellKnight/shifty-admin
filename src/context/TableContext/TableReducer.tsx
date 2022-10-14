@@ -1,6 +1,14 @@
 import { Dispatch } from 'react'
 
+export const TABLE_ACTIONS = {
+    INITIALIZE: "INITIALIZE",
+    LOADING: "LOADING",
+    CHANGE_DAY: "CHANGE_DAY",
+    CHANGE_SHIFT: "CHANGE_SHIFT",
+    ABORT: 'ABORT'
+}
 export type TableState = {
+    id: string,
     currentTable: any,
     startDate: string,
     endDate: string,
@@ -19,7 +27,12 @@ export type ActionPayload =
     | boolean
 
 export type TableAction = {
-    type: string,
+    type: typeof TABLE_ACTIONS.LOADING
+    | typeof TABLE_ACTIONS.INITIALIZE
+    | typeof TABLE_ACTIONS.CHANGE_DAY
+    | typeof TABLE_ACTIONS.CHANGE_SHIFT
+    | typeof TABLE_ACTIONS.ABORT
+
     payload: { startDate: string, endDate: string, table: any } | { shift: string } | { day: string } | any
     error?: string,
     loading?: boolean,
@@ -27,6 +40,7 @@ export type TableAction = {
 
 
 const INITIAL_TABLE_STATE: TableState = {
+    id: '',
     currentTable: null,
     startDate: '',
     endDate: '',
@@ -54,6 +68,7 @@ const TableReducer = (state: TableState, action: TableAction): TableState => {
             if (action.payload.table.SUN[0])
                 return {
                     ...state,
+                    id: action.payload._id,
                     startDate: action.payload.startDate,
                     endDate: action.payload.endDate,
                     currentTable: action.payload.table,
@@ -78,6 +93,11 @@ const TableReducer = (state: TableState, action: TableAction): TableState => {
                 currentDay: action.payload.day,
                 currentShift: state.currentTable[action.payload.day][0]._id,
                 currentAgents: state.currentTable[action.payload.day][0].agents
+            }
+        }
+        case 'ABORT': {
+            return {
+                ...INITIAL_TABLE_STATE
             }
         }
         default:

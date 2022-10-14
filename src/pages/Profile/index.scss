@@ -1,27 +1,32 @@
 .profile {
     width: 100%;
+    color: white;
+
 
     & p {
         display: flex;
         flex-direction: column;
         font-size: .9rem;
-        color: #6d6d6d;
-
+        color: #acacac;
 
         & span {
             font-size: 1.1rem;
-            color: #2c2c2c;
+            color: whitesmoke;
         }
     }
 
 
 
     &__info {
+        width: max-content;
+        padding: 1rem;
+        margin-inline-start: auto;
         display: flex;
         flex-direction: row-reverse;
         align-items: flex-end;
         text-align: right;
         gap: 5em;
+        border: 1px solid rgba(255, 255, 255, 0.1);
 
         &__table-settings {
             align-self: flex-start;
@@ -39,6 +44,10 @@
             display: grid;
             gap: 1em;
 
+        }
+
+        h1 {
+            color: lightcoral;
         }
     }
 }

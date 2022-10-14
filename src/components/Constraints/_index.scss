@@ -4,6 +4,7 @@
     border: 1px solid #2c2c2c;
     border-top: none;
     border-right: none;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
 
     &__shifts {
         display: grid;
@@ -36,7 +37,7 @@
         border-right: 1px solid #2c2c2c;
 
         & .notes {
-            color: rgb(0 0 0 / .5);
+            color: #d2d2d2;
             font-size: .8em;
         }
 
@@ -45,6 +46,7 @@
             padding-inline: 1rem;
             width: 180px;
             text-align: center;
+            color: #d2d2d2;
 
             &.rejected-shift {
                 background-color: rgba(240, 128, 128, 0.5);
@@ -59,7 +61,7 @@
             }
 
 
-            &:not(:first-of-type, :last-of-type) {
+            &:not( :last-of-type) {
                 border-left: 1px solid #2c2c2c;
             }
         }
@@ -69,7 +71,7 @@
         }
 
         &:not(:last-child)>p:first-of-type {
-            border-bottom: 1px solid whitesmoke;
+            border-bottom: 1px solid #2c2c2c;
         }
     }
 }

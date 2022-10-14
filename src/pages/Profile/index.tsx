@@ -28,6 +28,8 @@ const Profile = () => {
         }
     }
 
+    console.log(agent)
+
     useEffect(() => {
         if (data && !error) {
             setAgent({ ...data._doc })
@@ -46,7 +48,7 @@ const Profile = () => {
         <MainContent>
             <>
                 <div className='profile'>
-                    {agent && currCons ?
+                    {agent &&
                         <>
                             <div className='profile__info'>
                                 <div className="profile__info__personal" dir='rtl'>
@@ -69,8 +71,6 @@ const Profile = () => {
                                 </div>
                             </div>
                         </>
-                        :
-                        <Loader />
                     }
                 </div>
                 <div className='btn-container'>

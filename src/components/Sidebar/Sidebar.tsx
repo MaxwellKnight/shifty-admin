@@ -14,7 +14,7 @@ const Sidebar: React.FC = () => {
 
     return (
         <div className='sidebar'>
-            <Link to='/dashboard' style={linkStyles} className='sidebar__item'>
+            <Link to='/agents' style={linkStyles} className='sidebar__item'>
                 <span>צפה בעובדים</span>
                 <FontAwesomeIcon className='icon' icon={solid('user-secret')} />
             </Link >

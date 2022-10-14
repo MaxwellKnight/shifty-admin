@@ -11,8 +11,10 @@ body {
 }
 
 .btn {
+    margin-block-start: 1em;
     border: 0;
     background: #202020;
+    padding: 1em 1.5em;
     color: whitesmoke;
     cursor: pointer;
     border-radius: .5em;
@@ -21,4 +23,30 @@ body {
 
 .btn:hover {
     border-radius: 1em;
+}
+
+.btn-primary {
+    background-color: steelblue;
+}
+
+.btn-success {
+    background-color: teal;
+}
+
+.btn-secondary {
+    background: gray;
+    color: #2c2c2c;
+}
+
+.btn-failure {
+    background-color: firebrick;
+}
+
+.btn-flex-container {
+    display: flex;
+    gap: .5em;
+
+    &>button {
+        width: max-content;
+    }
 }

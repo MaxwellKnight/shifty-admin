@@ -40,7 +40,7 @@ const Login: React.FC = () => {
             console.log(data)
             if (!data) dispatch?.({ type: 'LOGIN_FAILURE', error: 'משתמש לא קיים!', user: null })
             dispatch?.({ type: 'LOGIN_SUCCESS', user: data })
-            navigate('/dashboard')
+            navigate('/agents')
         } catch (error) {
             dispatch?.({ type: 'LOGIN_FAILURE', error: 'שם משתמש או סיסמה לא נכונים!', user: null })
         }
