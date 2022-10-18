@@ -34,7 +34,7 @@ const Shifts = ({ shifts }: { shifts: any }) => {
                 <p>בוקר</p>
                 <p>צהריים</p>
                 <p>לילה</p>
-                <p>מתקן</p>
+                <p>מיקום</p>
             </div>
             {getArr && getArr.map((day: any, index: number) => {
                 return (

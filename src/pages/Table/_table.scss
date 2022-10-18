@@ -30,6 +30,12 @@ header {
             cursor: pointer;
             position: relative;
 
+            span {
+                display: block;
+                font-size: .8em;
+                opacity: .6;
+            }
+
             &.active-day {
                 font-weight: bold;
                 color: whitesmoke;
@@ -41,7 +47,7 @@ header {
                 content: '';
                 position: absolute;
                 width: .2em;
-                height: 100%;
+                height: 50%;
                 background-color: lightcoral;
                 margin-inline-start: .5em;
                 opacity: 0;

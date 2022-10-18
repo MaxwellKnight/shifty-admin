@@ -28,7 +28,6 @@ const Profile = () => {
         }
     }
 
-    console.log(agent)
 
     useEffect(() => {
         if (data && !error) {

@@ -35,4 +35,21 @@ const getBtnClass = (id: string, currShift: string) => {
     return id === currShift
 }
 
-export { formattedDate, getShiftType, getFacility, getBtnClass }
+
+const getDay = (date: string) => {
+    return new Map([
+        [0, 'ראשון'],
+        [1, 'שני'],
+        [2, 'שלישי'],
+        [3, 'רביעי'],
+        [4, 'חמישי'],
+        [5, 'שישי'],
+        [6, 'שבת']
+    ]).get(new Date(date).getDay())
+}
+const translateDate = (date: string) => {
+    const toDate = date.split("-")
+    return `${toDate[1]}/${toDate[0]}/${toDate[2]}`
+}
+
+export { formattedDate, getShiftType, getFacility, getBtnClass, getDay, translateDate }

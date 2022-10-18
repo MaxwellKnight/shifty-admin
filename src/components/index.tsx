@@ -1,4 +1,3 @@
-import Agent from './Agent/Agent'
 import Agents from './Agents/Agents'
 import Chart from './List'
 import MainContent from './MainContent/MainContent'
@@ -10,5 +9,19 @@ import Loader from './Loader'
 import Shifts from './Shifts'
 import Modal from './Modal'
 import TableNavigation from './TableNavigation'
+import Shift from './Shift'
 
-export { Agent, Agents, Chart, MainContent, Sidebar, List, Constraints, ConstraintsForm, Loader, Shifts, Modal, TableNavigation }
+export {
+    Agents,
+    Chart,
+    MainContent,
+    Sidebar,
+    List,
+    Constraints,
+    ConstraintsForm,
+    Loader,
+    Shifts,
+    Modal,
+    TableNavigation,
+    Shift
+}

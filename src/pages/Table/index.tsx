@@ -19,7 +19,9 @@ import {
     getBtnClass,
     getFacility,
     getShiftType,
-    formattedDate
+    formattedDate,
+    getDay,
+    translateDate
 } from '../../utils/functions'
 
 const { LOADING, INITIALIZE, CHANGE_DAY, CHANGE_SHIFT } = TABLE_ACTIONS
@@ -32,10 +34,12 @@ const Table = () => {
         dispatch?.({ type: LOADING, payload: true })
         const init = async () => {
             const table = await axios.get('http://localhost:8000/tables/new')
-            dispatch?.({ type: 'INITIALIZE', payload: table.data[0] })
+            const payload = table.data[0]
+            dispatch?.({ type: INITIALIZE, payload })
         }
         init()
     }, [])
+
 
     useEffect(() => {
         const fetchAgents = async () => {
@@ -51,7 +55,24 @@ const Table = () => {
         fetchAgents()
     }, [state.currentAgents])
 
-
+    const dayNavigation = (table: any) => {
+        const dayNavigationComponents: JSX.Element[] = []
+        for (const [key, value] of table) {
+            dayNavigationComponents.push(
+                <li
+                    key={key}
+                    className={state.currentDay === key ? 'active-day' : ''}
+                    onClick={() => {
+                        dispatch?.({ type: CHANGE_DAY, payload: { day: key } })
+                    }}
+                >
+                    <span>{translateDate(key)}</span>
+                    {getDay(key)}
+                </li>
+            )
+        }
+        return dayNavigationComponents
+    }
 
     return (
         <MainContent>
@@ -62,48 +83,7 @@ const Table = () => {
 
                         <div className='table__container__wrap__days-list'>
                             <ul>
-                                <li
-                                    className={state.currentDay === 'SUN' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'SUN' } })}
-                                >
-                                    ראשון
-                                </li>
-                                <li
-                                    className={state.currentDay === 'MON' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'MON' } })}
-                                >
-                                    שני
-                                </li>
-                                <li
-                                    className={state.currentDay === 'TUE' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'TUE' } })}
-                                >
-                                    שלישי
-                                </li>
-                                <li
-                                    className={state.currentDay === 'WED' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'WED' } })}
-                                >
-                                    רביעי
-                                </li>
-                                <li
-                                    className={state.currentDay === 'THU' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'THU' } })}
-                                >
-                                    חמישי
-                                </li>
-                                <li
-                                    className={state.currentDay === 'FRI' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'FRI' } })}
-                                >
-                                    שישי
-                                </li>
-                                <li
-                                    className={state.currentDay === 'SAT' ? 'active-day' : ''}
-                                    onClick={() => dispatch?.({ type: CHANGE_DAY, payload: { day: 'SAT' } })}
-                                >
-                                    שבת
-                                </li>
+                                {dayNavigation(state.currentTable).map((li: JSX.Element) => li)}
                             </ul>
                         </div>
                         <div>
@@ -123,7 +103,7 @@ const Table = () => {
                         <div>
                             <List
                                 headers={['מיקום', 'סוג משמרת', 'תאריך', 'כמות עובדים', 'תקינות',]}
-                                data={state.currentTable[state.currentDay]}
+                                data={state.currentTable.get(state.currentDay)}
                                 keyExtractor={(shift: any) => String(shift._id)}
                                 renderItem={(shift => (
                                     <>
@@ -158,7 +138,6 @@ const Table = () => {
                 :
                 <h1 style={{ textAlign: 'center', paddingTop: '5rem' }}>לא נמצאו נתונים בשלב זה</h1>
             }
-            {state.loading && <Loader />}
         </MainContent >
     )
 }
