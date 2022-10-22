@@ -1,16 +1,16 @@
 import { useFetch } from "../../hooks"
 import { Link } from 'react-router-dom'
 import List from "../List"
-import './_agents.scss'
+import './_index.scss'
 import { useEffect, useState } from "react"
 import Loader from "../Loader"
 
 const Agents: React.FC = () => {
     const [agents, setAgents] = useState<any>(null)
-    const { data, loading, error } = useFetch('http://localhost:8000/agents')
+    const { data } = useFetch('http://localhost:8000/agents')
 
     const handleSearch = (e: any) => {
-        const { name, value } = e.target
+        const { value } = e.target
         if (value.length >= 2) {
             setAgents(data?.filter((agent: any) => (agent?.name.includes(value) || agent?.contact?.email?.includes(value) || agent?.contact?.phone.includes(value))))
         } else if (value.length <= 2) setAgents(data)

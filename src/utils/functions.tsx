@@ -1,5 +1,5 @@
 
-const formattedDate = (d = new Date) => {
+const formattedDate = (d: Date | undefined = new Date) => {
     let month = String(d?.getMonth() + 1);
     let day = String(d?.getDate());
     const year = String(d?.getFullYear());
@@ -35,6 +35,14 @@ const getBtnClass = (id: string, currShift: string) => {
     return id === currShift
 }
 
+const getDatesArray = function (start: Date, end: Date) {
+    const arr: Date[] = []
+    for (const dt = new Date(start); dt <= new Date(end); dt.setDate(dt.getDate() + 1)) {
+        arr.push(new Date(dt));
+    }
+    return arr;
+};
+
 
 const getDay = (date: string) => {
     return new Map([
@@ -52,4 +60,17 @@ const translateDate = (date: string) => {
     return `${toDate[1]}/${toDate[0]}/${toDate[2]}`
 }
 
-export { formattedDate, getShiftType, getFacility, getBtnClass, getDay, translateDate }
+const getShiftText = (type: string) => {
+    switch (type) {
+        case 'morning':
+            return 'בוקר'
+        case 'noon':
+            return 'צהריים'
+        case 'night':
+            return 'לילה'
+        default:
+            return
+    }
+}
+
+export { formattedDate, getShiftType, getFacility, getBtnClass, getDay, translateDate, getDatesArray, getShiftText }

@@ -1,18 +1,21 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { MainContent, ConstraintsForm, Constraints, Loader } from '../../components'
-import Shifts from '../../components/Shifts'
+import { MainContent, ConstraintsForm, Loader, ProfileTable } from '../../components'
 import { useFetch } from '../../hooks'
 import './index.scss'
 
 const Profile = () => {
     const params = useParams()
     const [agent, setAgent] = useState<any>(null)
+    const { data, error, reFetch } = useFetch(`http://localhost:8000/agents/${params.id}`)
     const [currCons, setCurrCons] = useState<Map<string, any> | null>(null)
     const [currShifts, setCurrShifts] = useState<Map<string, any> | null>(null)
     const [isFormShown, setIsFormShown] = useState<boolean>(false)
-    const { data, error, reFetch } = useFetch(`http://localhost:8000/agents/${params.id}`)
+    const [dates, setDates] = useState<{ startDate: Date, endDate: Date }>({
+        startDate: new Date(),
+        endDate: new Date()
+    })
     const getAgentRole = (role: string) => {
         return role === 'agent' ? 'מאבטח' : 'אחמש';
     }
@@ -28,7 +31,6 @@ const Profile = () => {
         }
     }
 
-
     useEffect(() => {
         if (data && !error) {
             setAgent({ ...data._doc })
@@ -40,6 +42,16 @@ const Profile = () => {
                 const shiftsMap = new Map(Object.entries(data._doc.weeklyShifts))
                 setCurrShifts(new Map(shiftsMap))
             }
+            (async () => {
+                try {
+                    const response = await axios.get('http://localhost:8000/tables/new')
+                    const { startDate, endDate } = response.data
+                    setDates((prevState) => ({ ...prevState, startDate: new Date(startDate), endDate: new Date(endDate) }))
+                }
+                catch (error) {
+                    console.log(error)
+                }
+            })()
         }
     }, [params.id, data])
 
@@ -88,8 +100,8 @@ const Profile = () => {
                 </div>
 
                 <div className='split'>
-                    {isFormShown && currCons ? <ConstraintsForm handleSubmit={handleFormSubmit} /> : <Constraints constraints={currCons} />}
-                    <Shifts shifts={currShifts} />
+                    {isFormShown && currCons ? <ConstraintsForm handleSubmit={handleFormSubmit} /> : <ProfileTable constraints={currCons} mode='פנוי' isShift={true} dates={{ ...dates }} />}
+                    <ProfileTable constraints={currShifts} mode='עובד' isShift={false} dates={{ ...dates }} />
                 </div>
             </>
         </MainContent>

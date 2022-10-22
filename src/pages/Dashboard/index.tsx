@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react'
 import { AuthContext, IAgent } from '../../context'
 import { useNavigate } from 'react-router-dom'
-import { MainContent, Agents, Sidebar, Loader } from './../../components'
+import { MainContent, Agents, Loader } from './../../components'
 import './index.scss'
 
 
@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
             }
             else navigate('/login')
         }
-    }, [user])
+    }, [user, navigate])
 
     return (
         <MainContent>

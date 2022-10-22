@@ -13,6 +13,10 @@
     background: #202020;
     color: whitesmoke;
 
+    &.true {
+        min-width: 100px;
+    }
+
     &__item:first-of-type {
         margin-block-start: 5em;
     }
@@ -21,6 +25,7 @@
         width: 70%;
         display: flex;
         justify-content: center;
+        align-items: center;
         padding: 1em 1.5em;
         background: #404040;
         border-radius: .5em;
@@ -28,12 +33,18 @@
         scale: 1;
         transition: scale .2s ease;
 
-        &:hover {
-            scale: 1.05;
+        &>.icon.false {
+            margin-inline-start: 1em;
         }
 
-        &>.icon {
-            margin-inline-start: 1em;
+        &.true {
+            width: 50px;
+            display: grid;
+            place-items: center;
+        }
+
+        &:hover {
+            scale: 1.05;
         }
     }
 }

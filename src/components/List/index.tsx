@@ -1,5 +1,5 @@
 import { ReactNode } from "react"
-import './_list.scss'
+import './_index.scss'
 
 export interface Props<ListItem, Headers> {
     headers?: Headers[],

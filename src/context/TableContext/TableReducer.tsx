@@ -1,4 +1,5 @@
 import { Dispatch } from 'react'
+import { ShiftsTable } from '../../interfaces/ITable'
 
 export const TABLE_ACTIONS = {
     INITIALIZE: "INITIALIZE",
@@ -9,11 +10,11 @@ export const TABLE_ACTIONS = {
 }
 export type TableState = {
     id: string,
-    currentTable: any,
+    currentTable: ShiftsTable | null,
     startDate: string,
     endDate: string,
     currentDay: string,
-    currentShift: string,
+    currentShift: string | undefined,
     currentAgents: any,
     error?: string | undefined,
     loading: boolean,
@@ -53,8 +54,8 @@ const INITIAL_TABLE_STATE: TableState = {
 const TableReducer = (state: TableState, action: TableAction): TableState => {
 
     const getAgentsFromShift = (id: string) => {
-        const shift = state.currentTable.get(state.currentDay).find((shift: any) => shift._id === id)
-        return shift.agents
+        const shift = state.currentTable?.get(state.currentDay)?.find((shift: any) => shift._id === id)
+        return shift?.agents
     }
 
     switch (action.type) {
@@ -66,7 +67,7 @@ const TableReducer = (state: TableState, action: TableAction): TableState => {
         }
         case 'INITIALIZE': {
             if (action.payload) {
-                const table = new Map(Object.entries(action.payload.table))
+                const table: ShiftsTable = new Map(Object.entries(action.payload.table))
                 const day = table.entries().next().value
                 const shift = day[1]
                 return {
@@ -90,12 +91,15 @@ const TableReducer = (state: TableState, action: TableAction): TableState => {
             }
         }
         case 'CHANGE_DAY': {
-            return {
-                ...state,
-                currentDay: action.payload.day,
-                currentShift: state.currentTable.get(action.payload.day)[0]._id,
-                currentAgents: state.currentTable.get(action.payload.day)[0].agents
+            if (state.currentTable) {
+                return {
+                    ...state,
+                    currentDay: action.payload.day,
+                    currentShift: state.currentTable.get(action.payload.day)?.[0]._id,
+                    currentAgents: state.currentTable.get(action.payload.day)?.[0].agents
+                }
             }
+            return { ...INITIAL_TABLE_STATE }
         }
         case 'ABORT': {
             return {

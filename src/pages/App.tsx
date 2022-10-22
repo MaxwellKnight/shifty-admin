@@ -6,6 +6,7 @@ import Table from './Table';
 import Profile from './Profile';
 import { TableContextProvider } from '../context/TableContext/TableContext';
 import Shifts from './Shifts';
+import Playground from './Playground';
 
 function App() {
   return (
@@ -21,8 +22,8 @@ function App() {
           <Route index element={
             <TableContextProvider>
               <Table />
-            </TableContextProvider>
-          } />
+            </TableContextProvider>} />
+          <Route path='/tables/edit' element={<Playground />}></Route>
         </Route>
         <Route path='/shifts'>
           <Route index element={<Shifts />} />

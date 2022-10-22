@@ -7,14 +7,21 @@ import './_index.scss'
 import { TableAction, TABLE_ACTIONS } from '../../context/TableContext/TableReducer'
 import { formattedDate } from '../../utils/functions'
 import List from '../List'
+import { ITable } from '../../interfaces/ITable'
 
 type TableNavigationProps = { setTable: React.Dispatch<TableAction> | undefined, table: any }
+
+interface ITableMinimal {
+    id: string,
+    startDate: Date,
+    endDate: Date
+}
 
 const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) => {
 
     const [{ isCreate, isPrev, isHold, isConfirm }, dispatch] = useReducer(TableNavReducer, INITIAL_STATE)
-    const [formError, setFormError] = useState<any>(null)
-    const [tablesList, setTablesList] = useState<any>(null)
+    const [formError, setFormError] = useState<string>()
+    const [tablesList, setTablesList] = useState<ITableMinimal[] | null>(null)
     const navigate = useNavigate()
     const [formData, setFormData] = useState({
         startDate: '',
@@ -23,7 +30,7 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
 
     useEffect(() => {
         const fetchTables = async () => {
-            const { data } = await axios.get("http://localhost:8000/tables/new")
+            const { data }: { data: ITable[] } = await axios.get("http://localhost:8000/tables/")
             const allTables = await Promise.all(data.map((table: any) => {
                 const { startDate, endDate, _id } = table
                 return {
@@ -70,7 +77,7 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
 
             console.log(res.data)
         } catch (error) {
-            setFormError(error)
+            setFormError('בחר תאריכים בטווח עד 7 ימים')
             console.log(error)
         }
     }
@@ -83,19 +90,19 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
                     className={isCreate ? 'btn-group--active' : ''}
                     onClick={() => dispatch({ type: 'CREATE_TABLE', payload: true })}
                 >
-                    צור סידור חדש
+                    חדש
                 </button>
                 <button
                     className={isPrev ? 'btn-group--active' : ''}
                     onClick={() => dispatch({ type: 'PREV_TABLE', payload: true, table: null })}
                 >
-                    סידורים קודמים
+                    היסטוריה
                 </button>
                 <button
                     className={isHold ? 'btn-group--active' : ''}
                     onClick={() => dispatch({ type: 'HOLD_TABLE', payload: true })}
                 >
-                    סידורים בהמתנה
+                    בהמתנה
                 </button>
             </div>
             {table.startDate && <><h1 className='dates-heading'>{formattedDate(new Date(table.startDate))} ---  {formattedDate(new Date(table.endDate))}</h1></>}
@@ -107,7 +114,7 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
                         {!isConfirm ?
                             <>
                                 <h4>בחר תאריכים</h4>
-                                {formError && <span className='form-error'>בחר תאריכים בטווח עד 7 ימים</span>}
+                                {formError && <span className='form-error'>{formError}</span>}
                                 <form className='create-table-container__form' onSubmit={(e) => onSubmit(e)}>
                                     <div>
                                         <label htmlFor='startDate'>תאריך התחלה</label>
@@ -146,7 +153,7 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
                                 renderItem={(table) => (
                                     <>
                                         <td className=''>
-                                            {formattedDate(new Date(table.endDate))} - {formattedDate(new Date(table.startDate))}
+                                            {formattedDate(new Date(table.endDate))} --- {formattedDate(new Date(table.startDate))}
                                             <div>
                                                 <button className='btn btn-primary'>צפה</button>
                                             </div>

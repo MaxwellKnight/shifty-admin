@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import axios from 'axios'
 import './_index.scss'
 
 const INITIAL_STATE = new Map<string, any>([

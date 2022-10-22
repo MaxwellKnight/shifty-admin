@@ -1,10 +1,12 @@
 import { ReactNode } from 'react'
-import './_main-content.scss'
-import Sidebar from '../Sidebar/Sidebar'
+import './_index.scss'
+import Sidebar from '../Sidebar'
 
 const MainContent =
-    ({ children
+    ({ children,
+        shrink = false
     }: {
+        shrink?: boolean,
         children: ReactNode
     }) => {
         return (
@@ -12,7 +14,7 @@ const MainContent =
                 <div className="content">
                     {children}
                 </div>
-                <Sidebar />
+                <Sidebar shrink={shrink} />
             </div>
         )
     }

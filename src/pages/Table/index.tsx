@@ -9,7 +9,6 @@ import {
 } from 'react'
 
 import {
-    Loader,
     MainContent,
     TableNavigation,
     List
@@ -23,6 +22,7 @@ import {
     getDay,
     translateDate
 } from '../../utils/functions'
+import { ITable, ShiftsTable } from '../../interfaces/ITable'
 
 const { LOADING, INITIALIZE, CHANGE_DAY, CHANGE_SHIFT } = TABLE_ACTIONS
 
@@ -34,7 +34,7 @@ const Table = () => {
         dispatch?.({ type: LOADING, payload: true })
         const init = async () => {
             const table = await axios.get('http://localhost:8000/tables/new')
-            const payload = table.data[0]
+            const payload: ITable = table.data
             dispatch?.({ type: INITIALIZE, payload })
         }
         init()
@@ -55,7 +55,7 @@ const Table = () => {
         fetchAgents()
     }, [state.currentAgents])
 
-    const dayNavigation = (table: any) => {
+    const dayNavigation = (table: ShiftsTable) => {
         const dayNavigationComponents: JSX.Element[] = []
         for (const [key, value] of table) {
             dayNavigationComponents.push(
@@ -80,7 +80,6 @@ const Table = () => {
             {state.currentTable ?
                 <>
                     <div className='table__container__wrap'>
-
                         <div className='table__container__wrap__days-list'>
                             <ul>
                                 {dayNavigation(state.currentTable).map((li: JSX.Element) => li)}
@@ -102,28 +101,22 @@ const Table = () => {
                         </div>
                         <div>
                             <List
-                                headers={['מיקום', 'סוג משמרת', 'תאריך', 'כמות עובדים', 'תקינות',]}
-                                data={state.currentTable.get(state.currentDay)}
+                                headers={['מיקום', 'סוג משמרת', 'תאריך', 'כמות עובדים', 'תקינות']}
+                                data={state.currentTable.get(state.currentDay) || []}
                                 keyExtractor={(shift: any) => String(shift._id)}
                                 renderItem={(shift => (
                                     <>
                                         <td>
                                             <button
-                                                className={getBtnClass(shift?._id, state.currentShift) ? 'btn-table active' : 'btn-table'}
+                                                className={shift._id && getBtnClass(shift?._id, state.currentShift || '') ? 'btn-table active' : 'btn-table'}
                                                 onClick={() => dispatch?.({ type: CHANGE_SHIFT, payload: { shift: shift?._id } })}
                                             >
                                                 {getFacility(shift?.facility)}
                                             </button>
                                         </td>
-                                        <td>
-                                            {getShiftType(shift?.type)}
-                                        </td>
-                                        <td>
-                                            {formattedDate(new Date(shift?.date))}
-                                        </td>
-                                        <td>
-                                            {shift?.limit} / {shift?.agents.length}
-                                        </td>
+                                        <td>{getShiftType(shift?.type)}</td>
+                                        <td>{formattedDate(new Date(shift?.date))}</td>
+                                        <td>{shift?.limit} / {shift?.agents.length}</td>
                                         <td
                                             className={shift?.isFull ? 'full' : 'partial'}
                                         >

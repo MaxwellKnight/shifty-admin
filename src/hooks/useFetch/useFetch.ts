@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from "react"
+import { useEffect, useReducer } from "react"
 import { FetchReducer, INITIAL_STATE } from './reducer'
 import axios from 'axios'
 

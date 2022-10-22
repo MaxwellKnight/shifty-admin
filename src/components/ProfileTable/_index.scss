@@ -1,10 +1,10 @@
-.shifts {
+.personal-table {
     max-width: max-content;
     margin-inline-end: auto;
     border: 1px solid #2c2c2c;
     border-top: none;
     border-right: none;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35);
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 
     &__shifts {
         display: grid;
@@ -16,7 +16,7 @@
             padding-block: 1rem;
             padding-inline: 1rem;
             text-align: center;
-            color: #d2d2d2;
+            color: whitesmoke;
             border: 1px solid #2c2c2c;
             background-color: #505050;
 
@@ -25,7 +25,7 @@
             }
 
             &:last-of-type {
-                border-left: none;
+                border-left: 0;
             }
         }
     }
@@ -37,7 +37,7 @@
         border-right: 1px solid #2c2c2c;
 
         & .notes {
-            color: rgb(0 0 0 / .5);
+            color: #d2d2d2;
             font-size: .8em;
         }
 
@@ -49,7 +49,7 @@
             color: #d2d2d2;
 
             &.rejected-shift {
-                background-color: hsla(120, 73%, 75%, 0.5);
+                background-color: rgba(240, 128, 128, 0.5);
             }
 
 
@@ -57,11 +57,11 @@
 
             &:first-of-type {
                 background-color: #505050;
-                color: white;
+                color: whitesmoke;
             }
 
 
-            &:not(:first-of-type, :last-of-type) {
+            &:not( :last-of-type) {
                 border-left: 1px solid #2c2c2c;
             }
         }

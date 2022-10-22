@@ -1,4 +1,5 @@
 export interface IBaseAgent {
+    _id?: string,
     teamId: number,
     name: string,
     username: string,
@@ -23,4 +24,5 @@ export interface IBaseAgent {
     },
     createdAt?: Date,
     updatedAt?: Date
+    __v: number
 }

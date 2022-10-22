@@ -16,9 +16,16 @@ body {
     background: #202020;
     padding: 1em 1.5em;
     color: whitesmoke;
+    font-weight: bold;
     cursor: pointer;
     border-radius: .5em;
-    transition: border-radius .2s ease;
+    scale: 1;
+    transition: border-radius .2s ease,
+        scale .2s ease;
+}
+
+.btn:active {
+    scale: .95;
 }
 
 .btn:hover {
@@ -30,16 +37,15 @@ body {
 }
 
 .btn-success {
-    background-color: teal;
+    background-color: hsl(120, 50%, 50%);
 }
 
 .btn-secondary {
     background: gray;
-    color: #2c2c2c;
 }
 
-.btn-failure {
-    background-color: firebrick;
+.btn-danger {
+    background-color: hsl(0, 79%, 60%);
 }
 
 .btn-flex-container {

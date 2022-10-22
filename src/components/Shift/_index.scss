@@ -1,0 +1,98 @@
+.shift {
+    color: whitesmoke;
+    background-color: #2c2c2c;
+    padding: 1em;
+    text-align: right;
+    font-size: .9em;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border-radius: .1em;
+    margin-block-end: 1em;
+
+    &__title {
+        margin-block-end: 1em;
+
+        &-saved {
+            color: hsl(120, 50%, 50%);
+            font-size: 1.1em;
+        }
+    }
+
+
+    &__form {
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+
+        &__input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__buttons-dates {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;
+        }
+
+        &__dates {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 1em;
+            align-self: flex-end;
+        }
+
+        p {
+            font-size: .9em;
+
+            span {
+                opacity: .5;
+                font-size: .8em;
+                display: block;
+            }
+        }
+
+
+        &__wrapper {
+            display: flex;
+            flex-direction: row-reverse;
+            gap: 2em;
+        }
+
+        &__group {
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        label {
+            display: block;
+            margin-block-end: 1em;
+            opacity: .9;
+        }
+
+        input[type='text'],
+        input[type='number'],
+        select {
+            width: 100%;
+            border: 0;
+            padding: .5em 1em;
+            text-align: right;
+            color: whitesmoke;
+            background-color: #636363;
+        }
+
+        select,
+        input[type='number'] {
+            margin-inline-start: auto;
+        }
+
+        input[type='checkbox'] {
+            margin-inline-start: auto;
+        }
+
+        .shift__form__buttons {
+            display: flex;
+            gap: .5em;
+        }
+    }
+}

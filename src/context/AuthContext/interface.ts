@@ -1,4 +1,5 @@
 import { Dispatch } from "react"
+import { IUser } from "../../interfaces/IUser"
 
 export type IAgent = {
     _id: string,
@@ -15,7 +16,7 @@ export type IAction = {
 
 export type IAuthState = {
     loading: boolean,
-    user: IAgent | null,
+    user: IUser | null,
     error?: string | null,
     dispatch?: Dispatch<IAction>
 }

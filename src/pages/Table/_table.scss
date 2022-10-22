@@ -63,7 +63,6 @@ header {
 
             &:hover::after {
                 opacity: 1;
-                background-color: steelblue;
 
             }
         }
@@ -86,21 +85,20 @@ header {
     aspect-ratio: 2/1;
     padding: 1em;
     background-color: transparent;
-    border: 1px solid #2c2c2c;
+    border: 1px solid;
     border-radius: .5em;
     font-weight: bold;
+    color: hsl(0, 0%, 84%);
     cursor: pointer;
 
     transition: border-color .2s ease, color .2s ease;
 
     &:hover {
-        border-color: firebrick;
-        color: firebrick;
+        color: lightcoral;
     }
 
     &.active {
-        border-color: firebrick;
-        color: firebrick;
+        color: lightcoral;
         position: relative;
 
         &::before {
@@ -120,4 +118,8 @@ header {
     width: max-content;
     margin-block-end: 1rem;
     margin-inline: auto;
+}
+
+.agents-list {
+    color: #d2d2d2;
 }
