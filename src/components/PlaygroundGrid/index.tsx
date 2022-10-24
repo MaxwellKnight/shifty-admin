@@ -1,18 +1,21 @@
 import { Droppable, Draggable, DraggableProvided, DroppableStateSnapshot, DroppableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd'
 import { formattedDate, getShiftType, getDay } from '../../utils/functions'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 import { useFetch } from '../../hooks'
+import axios from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import './_index.scss'
 
 export interface PlaygroundProps<PlaygroundData, Headers> {
     headers?: Headers[],
     data: PlaygroundData[] | undefined,
+    agents: any
 }
 
 const sortByShift = (shifts: any) => {
     return shifts?.sort((a: any, b: any) => {
         if (a.type === 'morning' && b.type === 'morning') return 0
+        if (a.type === 'noon' && b.type === 'night') return -1
         if (a.type === 'morning' && (b.type === 'noon' || b.type === 'night')) return -1
         return 1
     })
@@ -21,8 +24,9 @@ const sortByShift = (shifts: any) => {
 const PlaygroundGrid = <PlaygroundData extends unknown, Headers extends ReactNode>({
     headers,
     data,
+    agents
 }: PlaygroundProps<PlaygroundData, Headers>) => {
-    const { data: agents } = useFetch('http://localhost:8000/agents')
+    const allShifts = sortByShift(data)
     return (
         <div className='playground-sheet' dir='rtl'>
 
@@ -33,8 +37,8 @@ const PlaygroundGrid = <PlaygroundData extends unknown, Headers extends ReactNod
                     <h4>{header}</h4>
                     <div className='playground-sheet__col__shifts'>
 
-                        {sortByShift(data?.filter((shift: any) => formattedDate(new Date(shift?.date)) === header))?.map((shift: any) => {
-                            return (shift &&
+                        {allShifts.filter((shift: any) => formattedDate(new Date(shift?.date)) === header)?.map((shift: any) => {
+                            return (
                                 <div
                                     className={`playground-sheet__col__shifts__agents ${String(shift.isFull)}`}
                                     key={uuidv4()}
@@ -86,6 +90,7 @@ const PlaygroundGrid = <PlaygroundData extends unknown, Headers extends ReactNod
                                                                 )}
                                                             </Draggable>
                                                         ))}
+
                                                     </div>
                                                 </>
                                             )

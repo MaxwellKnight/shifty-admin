@@ -7,9 +7,11 @@ import { ITable } from '../../interfaces/ITable'
 import { DragDropContext } from 'react-beautiful-dnd'
 import { formattedDate, getDatesArray } from '../../utils/functions'
 import './_index.scss'
+import { IBaseAgent } from '../../interfaces/IBaseAgent'
 
-const onDragEnd = (result: any, graph: any) => {
+const onDragEnd = (result: any, graph: any, setGraph: React.Dispatch<any>) => {
     if (result.destination === null) return
+
     const { source, destination, draggableId: current } = result
     const sourceIndex = source.index
     const destinationIndex = destination.index
@@ -17,13 +19,57 @@ const onDragEnd = (result: any, graph: any) => {
     const [sourceId, sourceFacility, sourceDate] = source.droppableId.split(',')
     const [destinationId, destinationFacility, destinationDate] = destination.droppableId.split(',')
 
-    console.log(sourceId, destinationId)
+    if (sourceId === destinationId) {
+        // const sourceArray = [...graph[sourceFacility]]
+        // let shift: any = sourceArray.find((shift: IBaseShift) => shift._id === sourceId)
+        // let agents = [...shift.agents]
+
+        // for (let i = 0; i < agents.length; i++) {
+        //     if (agents[i] === agentId) {
+        //         const [removed] = agents.splice(i - 1, 1)
+        //         agents.splice(destinationIndex, 0, removed)
+        //         console.log(sourceIndex, destinationIndex)
+        //         shift.agents = agents
+        //         for (let i = 0; i < sourceArray.length; i++) {
+        //             if (sourceArray[i]?._id === sourceId) {
+        //                 const [removed] = sourceArray.splice(i, 1)
+        //                 sourceArray.push(removed)
+        //                 setGraph((prevGraph: any) => ({ ...prevGraph, [sourceFacility]: sourceArray }))
+        //                 return
+        //             }
+        //         }
+        //         return
+        //     }
+        // }
+    }
+    else {
+        const sourceArray = graph[sourceFacility]
+        const destinationArray = graph[destinationFacility]
+        let sourceShift = sourceArray.find((shift: IBaseShift) => shift._id === sourceId)
+        let destinationShift = destinationArray.find((shift: IBaseShift) => shift._id === destinationId)
+        const filteredSource = sourceArray.filter((shift: IBaseShift) => shift._id !== sourceId)
+        const filteredDestination = destinationArray.filter((shift: IBaseShift) => shift._id !== destinationId)
+        const removedSourceAgents = sourceShift.agents.filter((id: string) => id !== agentId)
+        const removedDestinationAgents = [...destinationShift.agents]
+        removedDestinationAgents.push(agentId)
+
+        sourceShift.agents = removedSourceAgents
+        filteredSource.push(sourceShift)
+        destinationShift.agents = removedDestinationAgents
+        filteredDestination.push(destinationShift)
+        console.log(agentId, removedSourceAgents)
+
+        setGraph((prevGraph: any) => ({ ...prevGraph, [sourceFacility]: [...filteredSource], [destinationFacility]: [...filteredDestination] }))
+
+    }
 }
 
 const Playground = () => {
     const [table, setTable] = useState<ITable | null>(null)
     const [graph, setGraph] = useState<any>(null)
     const { data, loading, error } = useFetch('http://localhost:8000/tables/new')
+    const { data: agents } = useFetch('http://localhost:8000/agents')
+
     useEffect(() => {
         if (!error && data) {
             setTable({ ...data })
@@ -39,13 +85,15 @@ const Playground = () => {
             setGraph(buildGraph)
         }
     }, [data])
+
     return (
         <MainContent shrink={true}>
             {!loading && table && graph ?
-                <DragDropContext onDragEnd={(result) => onDragEnd(result, { ...graph })}>
+                <DragDropContext onDragEnd={(result) => onDragEnd(result, graph, setGraph)}>
                     <div className='playground'>
                         <div>
                             <PlaygroundGrid
+                                agents={agents}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['EYES']}
                             />
@@ -53,6 +101,7 @@ const Playground = () => {
                         <div>
                             <h2>תקשוב</h2>
                             <PlaygroundGrid
+                                agents={agents}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['TIKSHOV']}
                             />
@@ -60,6 +109,7 @@ const Playground = () => {
                         <div>
                             <h2>בינוי</h2>
                             <PlaygroundGrid
+                                agents={agents}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['BINUY']}
                             />
@@ -67,6 +117,7 @@ const Playground = () => {
                         <div>
                             <h2>משפחות</h2>
                             <PlaygroundGrid
+                                agents={agents}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['MISHPAHOT']}
                             />
@@ -75,6 +126,7 @@ const Playground = () => {
                         <div>
                             <h2>שיקום</h2>
                             <PlaygroundGrid
+                                agents={agents}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['SHIKUM']}
                             />
