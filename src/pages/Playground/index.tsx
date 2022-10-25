@@ -7,17 +7,14 @@ import { ITable } from '../../interfaces/ITable'
 import { DragDropContext } from 'react-beautiful-dnd'
 import { formattedDate, getDatesArray } from '../../utils/functions'
 import './_index.scss'
-import { IBaseAgent } from '../../interfaces/IBaseAgent'
 
 const onDragEnd = (result: any, graph: any, setGraph: React.Dispatch<any>) => {
     if (result.destination === null) return
 
     const { source, destination, draggableId: current } = result
-    const sourceIndex = source.index
-    const destinationIndex = destination.index
-    const [agentId, facility, date] = current.split(',')
-    const [sourceId, sourceFacility, sourceDate] = source.droppableId.split(',')
-    const [destinationId, destinationFacility, destinationDate] = destination.droppableId.split(',')
+    const [agentId] = current.split(',')
+    const [sourceId, sourceFacility] = source.droppableId.split(',')
+    const [destinationId, destinationFacility] = destination.droppableId.split(',')
 
     if (sourceId === destinationId) {
         // const sourceArray = [...graph[sourceFacility]]
@@ -47,6 +44,10 @@ const onDragEnd = (result: any, graph: any, setGraph: React.Dispatch<any>) => {
         const destinationArray = graph[destinationFacility]
         let sourceShift = sourceArray.find((shift: IBaseShift) => shift._id === sourceId)
         let destinationShift = destinationArray.find((shift: IBaseShift) => shift._id === destinationId)
+
+        if (destinationShift.agents.includes(agentId)) return
+        if (destinationShift.isFull) return
+
         const filteredSource = sourceArray.filter((shift: IBaseShift) => shift._id !== sourceId)
         const filteredDestination = destinationArray.filter((shift: IBaseShift) => shift._id !== destinationId)
         const removedSourceAgents = sourceShift.agents.filter((id: string) => id !== agentId)
@@ -54,8 +55,10 @@ const onDragEnd = (result: any, graph: any, setGraph: React.Dispatch<any>) => {
         removedDestinationAgents.push(agentId)
 
         sourceShift.agents = removedSourceAgents
+        if (sourceShift.agents.length < sourceShift.limit) sourceShift.isFull = false
         filteredSource.push(sourceShift)
         destinationShift.agents = removedDestinationAgents
+        if (destinationShift.agents.length >= destinationShift.limit) destinationShift.isFull = true
         filteredDestination.push(destinationShift)
         console.log(agentId, removedSourceAgents)
 
@@ -67,6 +70,7 @@ const onDragEnd = (result: any, graph: any, setGraph: React.Dispatch<any>) => {
 const Playground = () => {
     const [table, setTable] = useState<ITable | null>(null)
     const [graph, setGraph] = useState<any>(null)
+    const [currentAgent, setCurrentAgent] = useState<string | null>(null)
     const { data, loading, error } = useFetch('http://localhost:8000/tables/new')
     const { data: agents } = useFetch('http://localhost:8000/agents')
 
@@ -86,6 +90,8 @@ const Playground = () => {
         }
     }, [data])
 
+    console.log(currentAgent)
+
     return (
         <MainContent shrink={true}>
             {!loading && table && graph ?
@@ -94,6 +100,8 @@ const Playground = () => {
                         <div>
                             <PlaygroundGrid
                                 agents={agents}
+                                setCurrentAgent={setCurrentAgent}
+                                currentAgent={currentAgent}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['EYES']}
                             />
@@ -102,6 +110,8 @@ const Playground = () => {
                             <h2>תקשוב</h2>
                             <PlaygroundGrid
                                 agents={agents}
+                                setCurrentAgent={setCurrentAgent}
+                                currentAgent={currentAgent}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['TIKSHOV']}
                             />
@@ -110,6 +120,8 @@ const Playground = () => {
                             <h2>בינוי</h2>
                             <PlaygroundGrid
                                 agents={agents}
+                                setCurrentAgent={setCurrentAgent}
+                                currentAgent={currentAgent}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['BINUY']}
                             />
@@ -118,6 +130,8 @@ const Playground = () => {
                             <h2>משפחות</h2>
                             <PlaygroundGrid
                                 agents={agents}
+                                setCurrentAgent={setCurrentAgent}
+                                currentAgent={currentAgent}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['MISHPAHOT']}
                             />
@@ -127,6 +141,8 @@ const Playground = () => {
                             <h2>שיקום</h2>
                             <PlaygroundGrid
                                 agents={agents}
+                                setCurrentAgent={setCurrentAgent}
+                                currentAgent={currentAgent}
                                 headers={getDatesArray(new Date(table.startDate), new Date(table.endDate)).map(date => formattedDate(date))}
                                 data={graph['SHIKUM']}
                             />

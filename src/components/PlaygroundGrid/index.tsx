@@ -1,15 +1,15 @@
 import { Droppable, Draggable, DraggableProvided, DroppableStateSnapshot, DroppableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd'
 import { formattedDate, getShiftType, getDay } from '../../utils/functions'
-import { ReactNode, useEffect } from 'react'
-import { useFetch } from '../../hooks'
-import axios from 'axios'
+import { Dispatch, ReactNode, SetStateAction } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import './_index.scss'
 
 export interface PlaygroundProps<PlaygroundData, Headers> {
     headers?: Headers[],
     data: PlaygroundData[] | undefined,
-    agents: any
+    agents: any,
+    currentAgent: string | null,
+    setCurrentAgent: Dispatch<SetStateAction<string | null>>
 }
 
 const sortByShift = (shifts: any) => {
@@ -24,9 +24,17 @@ const sortByShift = (shifts: any) => {
 const PlaygroundGrid = <PlaygroundData extends unknown, Headers extends ReactNode>({
     headers,
     data,
-    agents
+    agents,
+    currentAgent,
+    setCurrentAgent
 }: PlaygroundProps<PlaygroundData, Headers>) => {
     const allShifts = sortByShift(data)
+
+    const handleCurrentAgent = (agentId: string, setCurrentAgent: Dispatch<SetStateAction<string | null>>) => {
+        if (currentAgent === agentId) setCurrentAgent(null)
+        else setCurrentAgent(agentId)
+    }
+    console.log(currentAgent)
     return (
         <div className='playground-sheet' dir='rtl'>
 
@@ -38,6 +46,7 @@ const PlaygroundGrid = <PlaygroundData extends unknown, Headers extends ReactNod
                     <div className='playground-sheet__col__shifts'>
 
                         {allShifts.filter((shift: any) => formattedDate(new Date(shift?.date)) === header)?.map((shift: any) => {
+
                             return (
                                 <div
                                     className={`playground-sheet__col__shifts__agents ${String(shift.isFull)}`}
@@ -81,9 +90,9 @@ const PlaygroundGrid = <PlaygroundData extends unknown, Headers extends ReactNod
                                                                         ref={provided.innerRef}
                                                                         {...provided.draggableProps}
                                                                         {...provided.dragHandleProps}
-
+                                                                        onClick={() => handleCurrentAgent(agent._id, setCurrentAgent)}
                                                                     >
-                                                                        <span>
+                                                                        <span className={currentAgent === agent._id ? 'current' : ''}>
                                                                             {agent.name}
                                                                         </span>
                                                                     </div>

@@ -37,7 +37,11 @@
                     margin-block-end: .1em;
                     background-color: #2c2c2c;
                     color: whitesmoke;
-                    cursor: grab;
+                    cursor: pointer;
+
+                    &:active {
+                        cursor: grab;
+                    }
                 }
 
                 &>div>div>span,
@@ -91,4 +95,8 @@
 .draggin {
     z-index: 100;
     background-color: rgb(0 0 0 /.5);
+}
+
+.current {
+    background-color: firebrick !important;
 }
