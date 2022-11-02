@@ -1,7 +1,7 @@
 .constraints-form {
-    max-width: max-content;
-    margin-inline-end: auto;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    // max-width: max-content;
+    // margin-inline-end: auto;
+    // box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 
     &__wrapper {
         border: 1px solid #2c2c2c;
@@ -30,7 +30,6 @@
         }
 
         & label {
-            height: 100%;
             width: 100%;
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -56,7 +55,7 @@
         padding-block: 1rem;
         padding-inline: 1rem;
         text-align: center;
-        color: #d2d2d2;
+        color: whitesmoke;
         background-color: #505050;
 
         &:not(:first-of-type) {

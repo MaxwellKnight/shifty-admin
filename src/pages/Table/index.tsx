@@ -33,9 +33,13 @@ const Table = () => {
     useEffect(() => {
         dispatch?.({ type: LOADING, payload: true })
         const init = async () => {
-            const table = await axios.get('http://localhost:8000/tables/new')
-            const payload: ITable = table.data
-            dispatch?.({ type: INITIALIZE, payload })
+            try {
+                const table = await axios.get('http://localhost:8000/tables/new')
+                const payload: ITable = table.data
+                dispatch?.({ type: INITIALIZE, payload })
+            } catch (error) {
+                console.log('Failed fetching from server')
+            }
         }
         init()
     }, [])
@@ -58,6 +62,7 @@ const Table = () => {
     const dayNavigation = (table: ShiftsTable) => {
         const dayNavigationComponents: JSX.Element[] = []
         for (const [key, value] of table) {
+            console.log(new Date(key))
             dayNavigationComponents.push(
                 <li
                     key={key}
@@ -66,7 +71,7 @@ const Table = () => {
                         dispatch?.({ type: CHANGE_DAY, payload: { day: key } })
                     }}
                 >
-                    <span>{translateDate(key)}</span>
+                    <span>{key}</span>
                     {getDay(key)}
                 </li>
             )

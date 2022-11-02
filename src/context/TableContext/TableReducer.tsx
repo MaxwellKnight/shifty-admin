@@ -66,7 +66,7 @@ const TableReducer = (state: TableState, action: TableAction): TableState => {
             }
         }
         case 'INITIALIZE': {
-            if (action.payload) {
+            if (action.payload.table) {
                 const table: ShiftsTable = new Map(Object.entries(action.payload.table))
                 const day = table.entries().next().value
                 const shift = day[1]

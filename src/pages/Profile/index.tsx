@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { MainContent, ConstraintsForm, Loader, ProfileTable } from '../../components'
+import { MainContent, ConstraintsForm, Loader, ProfileTable, Modal } from '../../components'
 import { useFetch } from '../../hooks'
 import './index.scss'
 
@@ -84,7 +84,10 @@ const Profile = () => {
                         </>
                     }
                 </div>
-                <div className='btn-container'>
+                <br />
+                <br />
+                <br />
+                {/* <div className='btn-container'>
                     <button
                         className={isFormShown ? 'active' : ''}
                         onClick={() => setIsFormShown(true)}
@@ -97,11 +100,11 @@ const Profile = () => {
                     >
                         אילוצים
                     </button>
-                </div>
+                </div> */}
 
                 <div className='split'>
-                    {isFormShown && currCons ? <ConstraintsForm handleSubmit={handleFormSubmit} /> : <ProfileTable constraints={currCons} mode='פנוי' isShift={true} dates={{ ...dates }} />}
-                    <ProfileTable constraints={currShifts} mode='עובד' isShift={false} dates={{ ...dates }} />
+                    {isFormShown && currCons ? <Modal closeModal={() => setIsFormShown(false)}><ConstraintsForm handleSubmit={handleFormSubmit} /></Modal> : <ProfileTable constraints={currCons} mode='פנוי' isShift={true} dates={{ ...dates }} />}
+                    {currShifts && <ProfileTable constraints={currShifts} mode='עובד' isShift={false} dates={{ ...dates }} />}
                 </div>
             </>
         </MainContent>

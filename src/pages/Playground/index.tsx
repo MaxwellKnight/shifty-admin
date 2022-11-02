@@ -76,10 +76,10 @@ const Playground = () => {
 
     useEffect(() => {
         if (!error && data) {
-            setTable({ ...data })
+            setTable({ ...data?.data })
 
             const buildGraph: any = {}
-            const t = new Map<string, IBaseShift[]>(Object.entries(data.table))
+            const t = new Map<string, IBaseShift[]>(Object.entries(data.data.table))
             for (const [k, v] of t) {
                 for (const shift of v) {
                     if (!(shift.facility in buildGraph)) buildGraph[shift.facility] = []
@@ -90,7 +90,6 @@ const Playground = () => {
         }
     }, [data])
 
-    console.log(currentAgent)
 
     return (
         <MainContent shrink={true}>

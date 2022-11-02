@@ -1,8 +1,9 @@
 import { Droppable, Draggable, DraggableProvided, DroppableStateSnapshot, DroppableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd'
-import { formattedDate, getShiftType, getDay } from '../../utils/functions'
+import { formattedDate, getShiftType, getDay, getDayFromDate } from '../../utils/functions'
 import { Dispatch, ReactNode, SetStateAction } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import './_index.scss'
+import { useNavigate } from 'react-router-dom'
 
 export interface PlaygroundProps<PlaygroundData, Headers> {
     headers?: Headers[],
@@ -29,23 +30,34 @@ const PlaygroundGrid = <PlaygroundData extends unknown, Headers extends ReactNod
     setCurrentAgent
 }: PlaygroundProps<PlaygroundData, Headers>) => {
     const allShifts = sortByShift(data)
+    const navigate = useNavigate()
 
-    const handleCurrentAgent = (agentId: string, setCurrentAgent: Dispatch<SetStateAction<string | null>>) => {
-        if (currentAgent === agentId) setCurrentAgent(null)
-        else setCurrentAgent(agentId)
+    const handleCurrentAgent = (event: React.MouseEvent, agentId: string, setCurrentAgent: Dispatch<SetStateAction<string | null>>) => {
+        switch (event.detail) {
+            case 1: {
+                if (currentAgent === agentId) setCurrentAgent(null)
+                else setCurrentAgent(agentId)
+                break
+            }
+            case 2: {
+                return currentAgent && navigate(`/agents/${currentAgent}`)
+            }
+
+        }
+
     }
-    console.log(currentAgent)
+
     return (
         <div className='playground-sheet' dir='rtl'>
 
-            {agents && headers?.map?.((header, index) => (
+            {data && agents && allShifts && headers?.map?.((header, index) => (
 
                 <div key={index} className='playground-sheet__col'>
 
                     <h4>{header}</h4>
                     <div className='playground-sheet__col__shifts'>
 
-                        {allShifts.filter((shift: any) => formattedDate(new Date(shift?.date)) === header)?.map((shift: any) => {
+                        {allShifts.filter?.((shift: any) => formattedDate(new Date(shift?.date)) === header)?.map((shift: any) => {
 
                             return (
                                 <div
@@ -75,9 +87,9 @@ const PlaygroundGrid = <PlaygroundData extends unknown, Headers extends ReactNod
                                                         key={uuidv4()}
                                                         className={snapshot.isDraggingOver ? 'draggin' : ''}
                                                     >
-                                                        <h5 className={shift.type}>{getDay(shift.date)} {getShiftType(shift.type)}</h5>
+                                                        <h5 className={shift?.type}>{getDayFromDate(new Date(shift?.date))} {getShiftType(shift?.type)}</h5>
 
-                                                        {shift?.agents?.length > 0 && agents.filter((agent: any) => shift?.agents?.includes(agent._id))?.map((agent: any, index: number) => (
+                                                        {allShifts && shift?.agents?.length > 0 && agents.filter?.((agent: any) => shift?.agents?.includes?.(agent._id))?.map?.((agent: any, index: number) => (
                                                             <Draggable
                                                                 draggableId={`${agent._id},${shift.facility},${shift.date}`}
                                                                 index={index}
@@ -90,7 +102,7 @@ const PlaygroundGrid = <PlaygroundData extends unknown, Headers extends ReactNod
                                                                         ref={provided.innerRef}
                                                                         {...provided.draggableProps}
                                                                         {...provided.dragHandleProps}
-                                                                        onClick={() => handleCurrentAgent(agent._id, setCurrentAgent)}
+                                                                        onClick={(event) => handleCurrentAgent(event, agent._id, setCurrentAgent)}
                                                                     >
                                                                         <span className={currentAgent === agent._id ? 'current' : ''}>
                                                                             {agent.name}

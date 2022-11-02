@@ -4,7 +4,8 @@ export const TABLE_NAV_ACTIONS = {
     CREATE_TABLE: 'CREATE_TABLE',
     HOLD_TABLE: 'HOLD_TABLE',
     PREV_TABLE: 'PREV_TABLE',
-    CONFIRM_TABLE: 'CONFIRM_TABLE'
+    CONFIRM_TABLE: 'CONFIRM_TABLE',
+    CREATE_CONS: 'CREATE_CONS'
 }
 
 type IState = {
@@ -37,6 +38,10 @@ type IAction = {
 const TableNavReducer = (state: IState, action: IAction): IState => {
 
     switch (action.type) {
+        case 'CREATE_CONS':
+            return {
+                ...state,
+            }
         case 'CREATE_TABLE':
             return {
                 ...state,

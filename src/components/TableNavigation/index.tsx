@@ -5,9 +5,10 @@ import axios from 'axios'
 import { Modal } from '..'
 import './_index.scss'
 import { TableAction, TABLE_ACTIONS } from '../../context/TableContext/TableReducer'
-import { formattedDate } from '../../utils/functions'
+import { formattedDate, getDatesRange } from '../../utils/functions'
 import List from '../List'
 import { ITable } from '../../interfaces/ITable'
+import { type } from 'os'
 
 type TableNavigationProps = { setTable: React.Dispatch<TableAction> | undefined, table: any }
 
@@ -19,18 +20,18 @@ interface ITableMinimal {
 
 const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) => {
 
-    const [{ isCreate, isPrev, isHold, isConfirm }, dispatch] = useReducer(TableNavReducer, INITIAL_STATE)
+    const [{ isCreate, isPrev, isHold }, dispatch] = useReducer(TableNavReducer, INITIAL_STATE)
     const [formError, setFormError] = useState<string>()
-    const [tablesList, setTablesList] = useState<ITableMinimal[] | null>(null)
+    const [tablesList, setTablesList] = useState<ITable[] | null>(null)
     const navigate = useNavigate()
     const [formData, setFormData] = useState({
-        startDate: '',
-        endDate: '',
+        startDate: new Date,
+        endDate: new Date,
     })
 
     useEffect(() => {
         const fetchTables = async () => {
-            const { data }: { data: ITable[] } = await axios.get("http://localhost:8000/tables/")
+            const { data }: { data: any } = await axios.get("http://localhost:8000/dates/")
             const allTables = await Promise.all(data.map((table: any) => {
                 const { startDate, endDate, _id } = table
                 return {
@@ -51,25 +52,10 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
         setFormData(prevData => ({ ...prevData, [name]: value }))
     }
 
-
-    const abortTable = async (id: string) => {
-        try {
-            console.log(id)
-            const response = await axios.post(`http://localhost:8000/tables/new/confirm/${id}`)
-            if (response.data) {
-                alert('סידור בוטל')
-                setTable?.({ type: TABLE_ACTIONS.ABORT, payload: null })
-            }
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         try {
-            const res = await axios.post('http://localhost:8000/tables/new', formData)
+            const res = await axios.post('http://localhost:8000/dates/', { ...formData, limit: getDatesRange(formData.startDate, formData.endDate) })
             if (res.data) {
                 navigate(0)
                 dispatch({ type: 'CONFIRM_TABLE', payload: true })
@@ -77,7 +63,35 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
 
             console.log(res.data)
         } catch (error) {
-            setFormError('בחר תאריכים בטווח עד 7 ימים')
+            console.log(error)
+        }
+    }
+
+    useEffect(() => {
+        const fetchTablesHistory = async () => {
+            try {
+                const data: any = await axios.get('http://localhost:8000/tables')
+                if (data.data) {
+                    setTablesList(data.data)
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        if (isHold) {
+            fetchTablesHistory()
+        } else setTablesList(null)
+    }, [isHold])
+
+    const createTable = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>, startDate: Date, endDate: Date) => {
+        event.preventDefault()
+
+        try {
+            const response = await axios.post("http://localhost:8000/tables/new", { startDate, endDate })
+            if (response.data) {
+                setTable?.({ type: 'INITIALIZE', payload: response.data })
+            }
+        } catch (error) {
             console.log(error)
         }
     }
@@ -90,19 +104,19 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
                     className={isCreate ? 'btn-group--active' : ''}
                     onClick={() => dispatch({ type: 'CREATE_TABLE', payload: true })}
                 >
-                    חדש
+                    אילוצים
                 </button>
                 <button
                     className={isPrev ? 'btn-group--active' : ''}
                     onClick={() => dispatch({ type: 'PREV_TABLE', payload: true, table: null })}
                 >
-                    היסטוריה
+                    בהמתנה
                 </button>
                 <button
                     className={isHold ? 'btn-group--active' : ''}
                     onClick={() => dispatch({ type: 'HOLD_TABLE', payload: true })}
                 >
-                    בהמתנה
+                    היסטוריה
                 </button>
             </div>
             {table.startDate && <><h1 className='dates-heading'>{formattedDate(new Date(table.startDate))} ---  {formattedDate(new Date(table.endDate))}</h1></>}
@@ -111,34 +125,19 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
             {isCreate &&
                 <Modal closeModal={() => dispatch({ type: 'CREATE_TABLE', payload: false })}>
                     <div className="create-table-container">
-                        {!isConfirm ?
-                            <>
-                                <h4>בחר תאריכים</h4>
-                                {formError && <span className='form-error'>{formError}</span>}
-                                <form className='create-table-container__form' onSubmit={(e) => onSubmit(e)}>
-                                    <div>
-                                        <label htmlFor='startDate'>תאריך התחלה</label>
-                                        <input type="date" id='startDate' name='startDate' onChange={(e) => setForm(e)} />
-                                    </div>
-                                    <div>
-                                        <label htmlFor='endDate'>תאריך סוף</label>
-                                        <input type="date" id='endDate' name='endDate' onChange={(e) => setForm(e)} />
-                                    </div>
-                                    <button className='btn'>צור סידור</button>
-                                </form>
-                            </>
-                            :
-                            <>
-                                <div className='table-summary'>
-
-                                </div>
-                                <div className='btn-flex-container'>
-                                    <button className='btn btn-failure' onClick={() => abortTable(table.id)}>בטל</button>
-                                    <button className='btn btn-warning'>צור חדש</button>
-                                    <button className='btn btn-success'>אישור</button>
-                                </div>
-                            </>
-                        }
+                        <h4>בחר תאריכים</h4>
+                        {formError && <span className='form-error'>{formError}</span>}
+                        <form className='create-table-container__form' onSubmit={(e) => onSubmit(e)}>
+                            <div>
+                                <label htmlFor='startDate'>תאריך התחלה</label>
+                                <input type="date" id='startDate' name='startDate' onChange={(e) => setForm(e)} />
+                            </div>
+                            <div>
+                                <label htmlFor='endDate'>תאריך סוף</label>
+                                <input type="date" id='endDate' name='endDate' onChange={(e) => setForm(e)} />
+                            </div>
+                            <button className='btn'>צור תאריכים</button>
+                        </form>
                     </div>
                 </Modal>
             }
@@ -147,7 +146,7 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
                     {tablesList &&
                         <div className='previous-tables-container'>
                             <List
-                                headers={['סידורים קודמים']}
+                                headers={['תאריכים עתידיים']}
                                 keyExtractor={(table: any) => String(table.id)}
                                 data={tablesList}
                                 renderItem={(table) => (
@@ -155,7 +154,10 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
                                         <td className=''>
                                             {formattedDate(new Date(table.endDate))} --- {formattedDate(new Date(table.startDate))}
                                             <div>
-                                                <button className='btn btn-primary'>צפה</button>
+                                                <button className='btn btn-primary' onClick={(event) => {
+                                                    createTable(event, table.startDate, table.endDate)
+                                                    dispatch({ type: 'PREV_TABLE', payload: false })
+                                                }}>צור סידור</button>
                                             </div>
                                         </td>
                                     </>
@@ -167,7 +169,28 @@ const TableNavigation: React.FC<TableNavigationProps> = ({ setTable, table }) =>
             }
             {isHold &&
                 <Modal closeModal={() => dispatch({ type: 'HOLD_TABLE', payload: false })}>
-
+                    {tablesList &&
+                        <div className='previous-tables-container'>
+                            <List
+                                headers={['היסטוריה']}
+                                keyExtractor={(table: any) => String(table.id)}
+                                data={tablesList}
+                                renderItem={(table) => (
+                                    <>
+                                        <td className=''>
+                                            {formattedDate(new Date(table.endDate))} --- {formattedDate(new Date(table.startDate))}
+                                            <div>
+                                                <button className='btn btn-primary' onClick={(event) => {
+                                                    setTable?.({ type: 'INITIALIZE', payload: table })
+                                                    dispatch({ type: 'HOLD_TABLE', payload: false })
+                                                }}>צפה</button>
+                                            </div>
+                                        </td>
+                                    </>
+                                )}
+                            />
+                        </div>
+                    }
                 </Modal>
             }
 
