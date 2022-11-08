@@ -5,6 +5,13 @@ import { MainContent, ConstraintsForm, Loader, ProfileTable, Modal } from '../..
 import { useFetch } from '../../hooks'
 import './index.scss'
 
+interface IDates {
+    startDate: Date,
+    endDate: Date,
+    limit: number,
+    __v: number
+}
+
 const Profile = () => {
     const params = useParams()
     const [agent, setAgent] = useState<any>(null)
@@ -12,6 +19,7 @@ const Profile = () => {
     const [currCons, setCurrCons] = useState<Map<string, any> | null>(null)
     const [currShifts, setCurrShifts] = useState<Map<string, any> | null>(null)
     const [isFormShown, setIsFormShown] = useState<boolean>(false)
+    const [formDates, setFormDates] = useState<IDates | null>(null)
     const [dates, setDates] = useState<{ startDate: Date, endDate: Date }>({
         startDate: new Date(),
         endDate: new Date()
@@ -44,8 +52,9 @@ const Profile = () => {
             }
             (async () => {
                 try {
-                    const response = await axios.get('http://localhost:8000/tables/new')
-                    const { startDate, endDate } = response.data
+                    const response = await axios.get('http://localhost:8000/dates')
+                    if (!response.data) return
+                    const [startDate, endDate] = response.data
                     setDates((prevState) => ({ ...prevState, startDate: new Date(startDate), endDate: new Date(endDate) }))
                 }
                 catch (error) {
@@ -84,26 +93,18 @@ const Profile = () => {
                         </>
                     }
                 </div>
-                <br />
-                <br />
-                <br />
-                {/* <div className='btn-container'>
+                <div className='btn-container'>
                     <button
                         className={isFormShown ? 'active' : ''}
                         onClick={() => setIsFormShown(true)}
                     >
-                        טופס
+                        טופס אילוצים
                     </button>
-                    <button
-                        className={isFormShown ? '' : 'active'}
-                        onClick={() => setIsFormShown(false)}
-                    >
-                        אילוצים
-                    </button>
-                </div> */}
+                </div>
 
                 <div className='split'>
-                    {isFormShown && currCons ? <Modal closeModal={() => setIsFormShown(false)}><ConstraintsForm handleSubmit={handleFormSubmit} /></Modal> : <ProfileTable constraints={currCons} mode='פנוי' isShift={true} dates={{ ...dates }} />}
+                    {isFormShown && currCons && <Modal closeModal={() => setIsFormShown(false)}><ConstraintsForm handleSubmit={handleFormSubmit} constraints={null} /></Modal>}
+                    {currCons && <ProfileTable constraints={currCons} mode='פנוי' isShift={true} dates={{ ...dates }} />}
                     {currShifts && <ProfileTable constraints={currShifts} mode='עובד' isShift={false} dates={{ ...dates }} />}
                 </div>
             </>
